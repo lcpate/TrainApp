@@ -12,38 +12,50 @@
 
 <!-- header -->
 	<div class="container">
-		<div class="page-header text-center">
-			<h1>Anytime is Train Time!</h1>
-			<h3>Choo Choo. Chee Chee.</h3>
+		<div class="row">
+			<div class="col-md-1"></div>
+			<div class="col-md-2">
+				<a href="http://www.animatedimages.org/cat-trains-75.htm"><img src="http://www.animatedimages.org/data/media/75/animated-train-image-0031.gif" border="0" alt="animated-train-image-0031" /></a>
+			</div>
+			<div class="col-md-6">
+				<div class="page-header text-center">
+					<h1>Anytime is Train Time!</h1>
+					<h3>Choo Choo. Chee Chee.</h3>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<a href="http://www.animatedimages.org/cat-trains-75.htm"><img src="http://www.animatedimages.org/data/media/75/animated-train-image-0031.gif" border="0" alt="animated-train-image-0031" /></a>
+			</div>
 		</div>
 	</div>
 	
-	<!-- current employee table -->
+	<!-- Train schedule table -->
 	<div class="container">
-		<div class="panel panel-default">
-			<div class="panel-heading">Current Tarin Schedule</div>
-				<table class="table">
-			  		<thead>
-				    	<tr>
-				    		<th>Train Name</th>
-				    		<th>Destination</th>
-				    		<th>Frequency (min)</th>
-				    		<th>First Train Time</th>
-				    		<th>Next Arrival</th>
-				    		<th>Minutes Away</th>
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				
+				<strong>Current Train Schedule</strong></div>
+					<table class="table">
+			  			<thead>
+				    		<tr>
+					    		<th>Train Name</th>
+					    		<th>Destination</th>
+					    		<th>Frequency (min)</th>
+					    		<th>Next Arrival</th>
+					    		<th>Minutes Away</th>
 				 
-				    	</tr>
-			    	</thead>
-			    	<tbody id="table-body">
-			    	</tbody>
+				    		</tr>
+			    		</thead>
+			    		<tbody id="table-body">
+			    		</tbody>
 		  		</table>
 			</div>
 		</div>
 	</div>
 	
-	<!-- add employee form -->
+	<!-- add train form -->
 	<div class="container">
-		<div class="panel panel-default">
+		<div class="panel panel-danger">
 			<div class="panel-heading">
 				<h3 class="panel-title">Add Train</h3>
 			</div>
@@ -65,7 +77,7 @@
 	    				<label for="input-frequency">Frquency (min) </label><br>
 	    				<input type="text" class="form-control" id="input-frequency">
 	 				</div>
-	 				<button type="submit" id="submit" class="btn btn-primary">Submit</button>
+	 				<button type="submit" id="submit" class="btn btn-success">Submit</button>
 				</form>
 	  		</div>
 	  	</div>
@@ -81,126 +93,8 @@
 <!-- Link to Moment.js should go here -->
 <script src="https://cdn.jsdelivr.net/npm/moment@2.19.1/
 moment.min.js"></script>
-<script>
+<script type="text/javascript" src="assets/javascript/app.js"></script>
 
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyBemAQx9AQis3PwESSZF74pq_pwsyB7JAI",
-    authDomain: "train-app-905ef.firebaseapp.com",
-    databaseURL: "https://train-app-905ef.firebaseio.com",
-    projectId: "train-app-905ef",
-    storageBucket: "train-app-905ef.appspot.com",
-    messagingSenderId: "162147485181"
-  };
-  firebase.initializeApp(config);
-
-  var database = firebase.database();
-
-  var trainName = "";
-  var destination = "";
-  var firstTrain = "";
-  var frequency = "";
-
-// on(click) function for adding train info
-  $("#submit").on("click", function(snapshot){
-  		event.preventDefault();
-
-// Grabs user input
-  	trainName = $("#input-name").val().trim();
-  	destination = $("#input-destination").val().trim();
-  	firstTrain = $("#input-time").val().trim();
-  	frequency = $("#input-frequency").val().trim();
-
-// Creates local "Temporary" object for holding train data
-  	database.ref().push(newTrain);
-
-  	var newTrain = {
-  		name: trainName,
-  		destination: destination,
-  		firstTrain: firstTrain,
-  		frequency: frequency,
-  		dateAdded: firebase.database.ServerValue.TIMESTAMP
-  	};
-
-// pushes train info to database
-  	database.ref().push(newTrain);
-
-  	console.log(newTrain.name);
-  	console.log(newTrain.destination);
-  	console.log(newTrain.firstTrain);
-  	console.log(newTrain.frequency);
-
-// Clears input boxes
-  	$("#input-name").val("");
-	$("#input-destination").val("");
-	$("#input-time").val("");
-	$("#input-frequency").val("");
-
-	$("#table-body").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  frequency + "</td><td>" + firstTrain + "</td></tr>");
-
-	// $("#table-body").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
- //  frequency + "</td><td>" + firstTrain + "</td><td>" + arrival + "</td><td>" + minAway + "</td></tr>");
-
-  });
-
-// Create Firease event for adding trains to database and writing to the HTML 
-  database.ref().on("child_added", function(childSnapshot){
-
-  	console.log(childSnapshot.val());
-
-// Store everything into a variable
-  	trainName = childSnapshot.val().name;
-  	destination = childSnapshot.val().destination;
- 	firstTrain = childSnapshot.val().firstTrain;
-  	frequency = childSnapshot.val().frequency;
-
-  	var tFrequency = frequency;
-  	var firstTime = firstTrain;
-
-  	var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
-    console.log(firstTimeConverted);
-
-  	var currentTime = moment();
-  	console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
-
-  	var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-  	console.log("DIFFERENCE IN TIME: " + diffTime);
-
-  	var tRemainder = diffTime % tFrequency;
-    console.log(tRemainder);
-
-    var minAway = tFrequency - tRemainder;
-    console.log("MINUTES TILL TRAIN: " + minAway);
-
-    var nextTrain = moment().add(minAway, "minutes");
-    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
-
-
-  	console.log(childSnapshot.val().name);
-  	console.log(childSnapshot.val().destination);
-	console.log(childSnapshot.val().firstTrain);
-	console.log(childSnapshot.val().frequency);
-	console.log(childSnapshot.val().dateAdded);
-
-$("#table-body").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  frequency + "</td><td>" + firstTrain + "</td></tr>");
-
-  }, function(errorObject) {
-		console.log("Errors handled: " + errorObject.code);
-	});
-
-
-
-
-
-
-
-
-
-
-
-</script>
 <body>
 	
 </body>
